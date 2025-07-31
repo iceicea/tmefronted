@@ -170,7 +170,10 @@ const filters = ref({
 const isFilterApplied = ref(false)
 
 onMounted(() => {
-  dataList.value = data
+    //此处调用api获取后端数据
+    // fetchDataList();
+  // dataList.value = data;
+  dataList.value = fetchDataList();
 })
 
 // 计算筛选后的数据列表
@@ -318,13 +321,25 @@ const viewDetail = (item) => {
   // 这里未来可以实现跳转页面的逻辑
   alert(`查看 ${item.title} 的详情（功能开发中）`)
 }
+
+const fetchDataList = async () => {
+  try {
+    const response = await fetch(`/api/monitor/'Q音'/latest`);
+    const data = await response.json();
+    console.log(data);
+    return data;
+  } catch (error) {
+    console.error("获取视频列表失败:", error);
+  }
+};
 </script>
 
 <style scoped>
 .data-list {
   padding: 20px;
-  background-color: #f5f5f5;
+  background-color: rgb(10, 10, 11);
   min-height: 100vh;
+  color: #e0e0e0;
 }
 
 .list-header {
@@ -336,22 +351,23 @@ const viewDetail = (item) => {
 }
 
 .list-header h2 {
-  color: #333;
+  color: #f0f0f0;
   margin: 0;
 }
 
 .total-count {
-  color: #666;
+  color: #b0b0b0;
   font-size: 14px;
 }
 
 /* 筛选条件样式 */
 .filter-section {
-  background: white;
+  background: rgb(20, 21, 25);
   padding: 20px;
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
   margin-bottom: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .filter-row {
@@ -371,29 +387,36 @@ const viewDetail = (item) => {
 .filter-item label {
   font-size: 14px;
   font-weight: 500;
-  color: #333;
+  color: #e0e0e0;
 }
 
 .filter-input,
 .filter-select {
   padding: 8px 12px;
-  border: 1px solid #ddd;
+  border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 4px;
   font-size: 14px;
-  background: white;
+  background: rgba(30, 30, 35, 0.8);
+  color: #e0e0e0;
   transition: border-color 0.3s ease;
+}
+
+.filter-input::placeholder {
+  color: #888;
 }
 
 .filter-input:focus,
 .filter-select:focus {
   outline: none;
-  border-color: #1976d2;
+  border-color: #42a5f5;
+  background: rgba(40, 40, 45, 0.9);
 }
 
 .filter-select:disabled {
-  background-color: #f5f5f5;
-  color: #999;
+  background-color: rgba(20, 20, 25, 0.5);
+  color: #666;
   cursor: not-allowed;
+  border-color: rgba(255, 255, 255, 0.1);
 }
 
 .search-btn,
@@ -418,13 +441,13 @@ const viewDetail = (item) => {
 }
 
 .reset-btn {
-  background-color: #f5f5f5;
-  color: #666;
-  border: 1px solid #ddd;
+  background-color: rgba(60, 60, 65, 0.8);
+  color: #e0e0e0;
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .reset-btn:hover {
-  background-color: #e0e0e0;
+  background-color: rgba(80, 80, 85, 0.9);
 }
 
 .list-container {
@@ -438,15 +461,17 @@ const viewDetail = (item) => {
   grid-template-columns: 120px 2fr 1fr 3fr 100px 100px 120px 100px;
   gap: 15px;
   align-items: center;
-  background: white;
+  background: rgb(20, 21, 25);
   padding: 15px;
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
   transition: box-shadow 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .list-item:hover {
-  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+  border-color: rgba(255, 255, 255, 0.15);
 }
 
 /* 封面图片 */
@@ -460,7 +485,7 @@ const viewDetail = (item) => {
   height: 80px;
   object-fit: cover;
   border-radius: 6px;
-  border: 1px solid #eee;
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 /* 视频信息 */
@@ -472,7 +497,7 @@ const viewDetail = (item) => {
 
 .title {
   font-weight: 600;
-  color: #333;
+  color: #f0f0f0;
   font-size: 14px;
   line-height: 1.4;
   display: -webkit-box;
@@ -483,7 +508,7 @@ const viewDetail = (item) => {
 }
 
 .content {
-  color: #666;
+  color: #b0b0b0;
   font-size: 12px;
   line-height: 1.3;
   display: -webkit-box;
@@ -507,12 +532,12 @@ const viewDetail = (item) => {
 }
 
 .interaction-item .label {
-  color: #888;
+  color: #999;
   min-width: 35px;
 }
 
 .interaction-item .value {
-  color: #333;
+  color: #e0e0e0;
   font-weight: 500;
 }
 
@@ -525,13 +550,13 @@ const viewDetail = (item) => {
 
 .summary-label {
   font-size: 12px;
-  color: #888;
+  color: #999;
   font-weight: 500;
 }
 
 .summary-content {
   font-size: 13px;
-  color: #555;
+  color: #c0c0c0;
   line-height: 1.4;
   display: -webkit-box;
   -webkit-line-clamp: 3;
@@ -550,7 +575,7 @@ const viewDetail = (item) => {
 
 .sentiment-label {
   font-size: 12px;
-  color: #888;
+  color: #999;
 }
 
 .sentiment-score {
@@ -561,18 +586,21 @@ const viewDetail = (item) => {
 }
 
 .sentiment-positive {
-  background-color: #e8f5e8;
-  color: #2e7d32;
+  background-color: rgba(46, 125, 50, 0.2);
+  color: #81c784;
+  border: 1px solid rgba(129, 199, 132, 0.3);
 }
 
 .sentiment-neutral {
-  background-color: #fff3e0;
-  color: #f57c00;
+  background-color: rgba(245, 124, 0, 0.2);
+  color: #ffb74d;
+  border: 1px solid rgba(255, 183, 77, 0.3);
 }
 
 .sentiment-negative {
-  background-color: #ffebee;
-  color: #d32f2f;
+  background-color: rgba(211, 47, 47, 0.2);
+  color: #e57373;
+  border: 1px solid rgba(229, 115, 115, 0.3);
 }
 
 /* 风险机会分 */
@@ -585,13 +613,13 @@ const viewDetail = (item) => {
 
 .score-label {
   font-size: 12px;
-  color: #888;
+  color: #999;
 }
 
 .score-value {
   font-weight: 600;
   font-size: 14px;
-  color: #333;
+  color: #e0e0e0;
 }
 
 /* 等级标识 */
@@ -611,52 +639,52 @@ const viewDetail = (item) => {
 
 /* 风险等级颜色 */
 .level-red {
-  background-color: #ffebee;
-  color: #d32f2f;
-  border: 1px solid #d32f2f;
+  background-color: rgba(211, 47, 47, 0.2);
+  color: #ef5350;
+  border: 1px solid #ef5350;
 }
 
 .level-orange {
-  background-color: #fff3e0;
-  color: #f57c00;
-  border: 1px solid #f57c00;
+  background-color: rgba(245, 124, 0, 0.2);
+  color: #ff9800;
+  border: 1px solid #ff9800;
 }
 
 .level-yellow {
-  background-color: #fffde7;
-  color: #f9a825;
-  border: 1px solid #f9a825;
+  background-color: rgba(249, 168, 37, 0.2);
+  color: #ffc107;
+  border: 1px solid #ffc107;
 }
 
 .level-blue {
-  background-color: #e3f2fd;
-  color: #1976d2;
-  border: 1px solid #1976d2;
+  background-color: rgba(25, 118, 210, 0.2);
+  color: #42a5f5;
+  border: 1px solid #42a5f5;
 }
 
 /* 机会等级颜色 */
 .level-diamond {
-  background-color: #f3e5f5;
-  color: #7b1fa2;
-  border: 1px solid #7b1fa2;
+  background-color: rgba(123, 31, 162, 0.2);
+  color: #ba68c8;
+  border: 1px solid #ba68c8;
 }
 
 .level-gold {
-  background-color: #fff8e1;
-  color: #ef6c00;
-  border: 1px solid #ef6c00;
+  background-color: rgba(239, 108, 0, 0.2);
+  color: #ffb300;
+  border: 1px solid #ffb300;
 }
 
 .level-silver {
-  background-color: #fafafa;
-  color: #616161;
-  border: 1px solid #616161;
+  background-color: rgba(97, 97, 97, 0.2);
+  color: #bdbdbd;
+  border: 1px solid #bdbdbd;
 }
 
 .level-bronze {
-  background-color: #efebe9;
-  color: #5d4037;
-  border: 1px solid #5d4037;
+  background-color: rgba(93, 64, 55, 0.2);
+  color: #a1887f;
+  border: 1px solid #a1887f;
 }
 
 /* 查看详情按钮 */
@@ -667,7 +695,7 @@ const viewDetail = (item) => {
 
 .detail-btn {
   padding: 8px 16px;
-  background-color: #1976d2;
+  background-color: #42a5f5;
   color: white;
   border: none;
   border-radius: 4px;
@@ -675,14 +703,16 @@ const viewDetail = (item) => {
   font-size: 12px;
   font-weight: 500;
   transition: background-color 0.3s ease;
+  border: 1px solid rgba(66, 165, 245, 0.3);
 }
 
 .detail-btn:hover {
-  background-color: #1565c0;
+  background-color: #1e88e5;
+  border-color: rgba(30, 136, 229, 0.5);
 }
 
 .detail-btn:active {
-  background-color: #0d47a1;
+  background-color: #1565c0;
 }
 
 /* 响应式设计 */

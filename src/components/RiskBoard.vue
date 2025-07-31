@@ -3,6 +3,8 @@
 import { ref, computed } from "vue";
 
 import PieChart from "./PieChart.vue";
+import LineChart from "./lineChart.vue";
+import { useRoute } from 'vue-router'
 const summary = `
 Ex eu voluptate culpa minim. Mollit nisi ut quis cillum et ex elit minim magna mollit sint sunt. Ipsum Lorem duis incididunt magna adipisicing eu eiusmod ullamco. Minim dolor nisi nostrud sunt. Ex aliquip culpa duis labore sunt nulla incididunt duis. Labore qui aliqua irure ea commodo sint mollit laborum consequat. Tempor laboris ut reprehenderit ex eu culpa aliquip exercitation ut fugiat laborum aliquip do laborum.
 `;
@@ -23,6 +25,9 @@ const riskColor = computed(() => {
   if (riskScore.value >= 50) return "#ffa726"; // 橙
   return "#4caf50"; // 绿
 });
+const route = useRoute()
+const data = route.params
+console.log(data)
 </script>
 
 <template>
@@ -36,9 +41,8 @@ const riskColor = computed(() => {
 
       <!-- ② 事件详情 -->
       <div class="event-info">
-        <h3 class="topic">#是时候展现真正的技术了#</h3>
+        <h3 class="topic">{{ data.topics }}</h3>
         <div class="author-line">
-          <img src="/zhihu-logo.svg" class="avatar" alt="avatar" />
           <span class="name">恒大</span>
           <span class="fans">粉丝量:100w</span>
         </div>
@@ -61,64 +65,78 @@ const riskColor = computed(() => {
     </header>
 
     <!-- 2️⃣ 摘要 + 事件概览 -->
-    <section class="detail">
-      <h3>摘要</h3>
-      <p class="summary">{{ summary }}</p>
+   <div class="dashboard-container">
+    <!-- 顶部摘要 -->
+    <div class="summary-bar">
+      <div class="summary-title">摘要</div>
+      <div class="summary-content">
+        一连5张罚单，中国银行因“原油宝”产品风险事件被重罚5050万元，另有4名相关责任人被给予警告并合计处罚款180万元。……
+      </div>
+    </div>
 
-      <h3>事件概览</h3>
-      <section class="overview-grid">
-        <div class="grid-item-1">
-          <div class="table-title">基础信息</div>
-          <table>
-            <thead>
-              <tr>
-                <th>涉事主体(app)</th>
-                <th>涉及部门</th>
-                <th>发布平台</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>QQ音乐</td>
-                <td>平台产品部</td>
-                <td>小红书</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <div class="grid-item-2">
-          <h4 class="section-title">风险解析/机会解析</h4>
-          <div class="chart-container">
-            <div class="item1">
-              <div class="user-score">用户影响分数:75 分</div>
-              <div class="user-detail">
-                <div class="detail-item">粉丝数: 88k</div>
-              </div>
+    <!-- 主体内容区域 -->
+    <div class="main-content">
+      <!-- 左侧 -->
+      <div class="left-panel">
+        <!-- 事件概览 -->
+        <!-- <div class="section-title">事件概览</div> -->
+        <div class="base-info">
+          <div class="base-info-title">基础信息</div>
+          <div class="base-info-table">
+            <div class="table-row table-header">
+              <div>涉事主体（app）</div>
+              <div>涉及部门</div>
+              <div>发布平台</div>
             </div>
-            <div class="item2">
-              <PieChart />
-            </div>
-            <div class="item3">
-              <div class="propagation-score">传播扩散分数:85 分</div>
-              <div class="propagation-detail">
-                <div>点赞数</div>
-                <div>收藏数</div>
-                <div>评论数</div>
-              </div>
-            </div>
-            <div class="item4">
-              <div class="position-score">立场分数:65 分</div>
-              <div class="position-detail">
-                <div>场景类型</div>
-                <div>情感强度</div>
-              </div>
+            <div class="table-row">
+              <div>Q音乐，酷狗音乐<br/>(最多两个)</div>
+              <div>Q音推荐算法<br/>(保留前三个)</div>
+              <div>小红书</div>
             </div>
           </div>
         </div>
-        <div class="grid-item">3</div>
-        <div class="grid-item">4</div>
-      </section>
-    </section>
+        <!-- 热门评论 -->
+        <div class="hot-comment-section">
+          <div class="hot-comment-title">热门评论</div>
+          <LineChart/>
+        </div>
+      </div>
+
+      <!-- 右侧 -->
+      <div class="right-panel">
+        <!-- 风险分析/机会分析 -->
+        <!-- <div class="section-title right-title">
+          风险解析/机会解析
+          <button class="edit-btn">编辑</button>
+        </div> -->
+        <div class="risk-grid">
+          <div class="risk-item user-impact">
+            <div class="risk-item-title">用户影响分</div>
+            <div class="risk-item-content" style="font-size: 14px;">粉丝数：</div>
+          </div>
+          <div class="risk-item spread">
+            <div class="risk-item-title">传播扩散分</div>
+            <div class="risk-item-content" style="font-size: 14px;">点赞、收藏、评论：</div>
+          </div>
+          <div class="risk-item donut-chart">
+            <PieChart />
+          </div>
+          <div class="risk-item stance">
+            <div class="risk-item-title">立场得分</div>
+            <div class="risk-item-content" style="font-size: 14px;">场景类型：<br/>情感强度：</div>
+          </div>
+          <div class="risk-item opinion">
+            <div class="risk-item-title">网民观点</div>
+            <div class="risk-item-content"></div>
+          </div>
+          <div class="risk-item media">
+            <div class="risk-item-title">媒体观点</div>
+            <div class="risk-item-content"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
   </div>
 </template>
 
@@ -139,7 +157,7 @@ const riskColor = computed(() => {
   align-items: center;
   gap: 1.5rem;
   padding: 1rem 1.5rem;
-  background: #fafafa;
+  background:rgb(10,10,11);
 }
 
 /* 风险/机会色带 */
@@ -287,8 +305,8 @@ th {
 }
 
 .cover {
-  height: 100%; /* 填充满 cover-wrapper */
-  width: auto; /* 按比例缩放 */
+  height: 200px; /* 填充满 cover-wrapper */
+  width: 200px; /* 按比例缩放 */
   object-fit: cover;
   border-radius: 8px;
 }
@@ -304,6 +322,7 @@ th {
   margin: 0;
   font-size: 1.25rem;
   font-weight: 600;
+  color: #fff;
 }
 .author-line {
   display: flex;
@@ -321,10 +340,12 @@ th {
 .name,
 .fans {
   opacity: 0.6;
+  color: #fff;
 }
 .time {
   font-size: 0.75rem;
   opacity: 0.8;
+  color: #fff;
 }
 
 /* ③ 右侧面板 */
@@ -367,8 +388,8 @@ th {
   color: #fff;
 }
 .jump-btn {
-  background: rgba(103, 63, 215, 0.1);
-  color: #673fd7;
+  color: #fff;
+  background: linear-gradient(92.88deg, rgb(69, 94, 181) 9.16%, rgb(86, 67, 204) 43.89%, rgb(103, 63, 215) 64.72%);
   text-decoration: none;
 }
 
@@ -470,5 +491,274 @@ th {
   padding: 10px; /* 根据需要添加内边距 */
   text-align: center; /* 确保文本居中 */
   background: #673fd7; /* 背景色 */
+}
+.hot-comments-title {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 12px;
+}
+
+.hot-comments-box {
+  background-color: orange;
+  border-radius: 8px;
+  padding: 16px;
+  color: #fff;
+  /* 你可以根据需要调整阴影、边框等 */
+}
+.dashboard-container {
+  background:rgb(10,10,11);
+  color: #fff;
+  padding: 12px;
+  min-height: 100vh;
+  font-family: 'PingFang SC', 'Microsoft YaHei', Arial, sans-serif;
+  box-sizing: border-box;
+}
+
+/* 顶部摘要栏 */
+.summary-bar {
+  display: flex;
+  align-items: center;
+  background-color: rgb(20, 21, 25);
+  border-radius: 8px ;
+  padding: 8px 16px;
+  margin-bottom: 10px;
+  position: relative;
+}
+.summary-title {
+  background: linear-gradient(92.88deg, rgb(69, 94, 181) 9.16%, rgb(86, 67, 204) 43.89%, rgb(103, 63, 215) 64.72%);
+  border-radius: 6px;
+  padding: 2px 16px;
+  font-weight: bold;
+  margin-right: 16px;
+}
+.summary-content {
+  flex: 1;
+  font-size: 14px;
+  color: #e0e6ff;
+}
+.edit-btn {
+  background: #1d2e7a;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 2px 12px;
+  margin-left: 10px;
+  cursor: pointer;
+}
+
+/* 主体内容布局 */
+.main-content {
+  display: flex;
+  gap: 12px;
+  height: calc(100vh - 80px);
+}
+
+/* 左侧面板 */
+.left-panel {
+  flex: 1.7;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 420px;
+}
+.section-title {
+  background: #1d2e7a;
+  border-radius: 6px 6px 0 0;
+  padding: 4px 16px;
+  font-weight: bold;
+  font-size: 16px;
+  margin-bottom: 6px;
+}
+.base-info {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 8px;
+  margin-top: 6px;
+  background-color: rgb(20, 21, 25);
+}
+.base-info-title {
+  background: linear-gradient(92.88deg, rgb(69, 94, 181) 9.16%, rgb(86, 67, 204) 43.89%, rgb(103, 63, 215) 64.72%);
+    border-radius: 6px;
+    padding: 2px 10px;
+    font-size: 15px;
+    margin-bottom: 6px;
+    align-self: flex-start;
+   width: 60px;
+}
+.base-info-table {
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+.table-row {
+  display: flex;
+}
+.table-header > div {
+  /* background: #3b6680; */
+  color: #fff;
+  font-weight: bold;
+  flex: 1;
+  text-align: center;
+  padding: 12px 0;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: 14px;
+}
+.table-header > div:last-child {
+  border-right: none;
+}
+.table-row:not(.table-header) > div {
+  border-top: 1px solid ;
+  flex: 1;
+  text-align: center;
+  padding: 16px 0 12px 0;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: 14px;
+}
+.table-row:not(.table-header) > div:last-child {
+  border-right: none;
+}
+
+.hot-comment-section {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 8px 0 0 0;
+  flex: 0.71;
+  display: flex;
+  flex-direction: column;
+  background-color: rgb(20, 21, 25);
+}
+.hot-comment-title {
+  background: linear-gradient(92.88deg, rgb(69, 94, 181) 9.16%, rgb(86, 67, 204) 43.89%, rgb(103, 63, 215) 64.72%);
+    border-radius: 6px;
+    padding: 2px 10px;
+    font-size: 15px;
+    margin-bottom: 6px;
+    align-self: flex-start;
+    margin-left: 15px;
+}
+.hot-comment-content {
+  
+  color: #fff;
+  flex: 1;
+  border-radius: 0 0 8px 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+}
+
+/* 右侧面板 */
+.right-panel {
+  flex: 1.8;
+  display: flex;
+  flex-direction: column;
+  min-width: 600px;
+}
+.right-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.risk-grid {
+  display: grid;
+  grid-template-areas:
+    "user-impact donut-chart spread"
+    "stance donut-chart spread"
+    "opinion opinion media";
+  grid-template-columns: 1.1fr 1.2fr 1.1fr;
+  grid-template-rows: 110px 110px 1fr;
+  gap: 10px;
+  flex: 1;
+  margin-top: 6px;
+  width: 50vw;
+}
+.risk-item {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #fff;
+  border-radius: 8px;
+  padding: 8px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+.user-impact { 
+  grid-area: user-impact;
+  background-color: rgb(20, 21, 25);
+ }
+.spread { 
+  grid-area: spread;
+  background-color: rgb(20, 21, 25);
+ }
+.donut-chart { 
+  grid-area: donut-chart; 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgb(20, 21, 25);
+}
+.stance { 
+  grid-area: stance;
+  background-color: rgb(20, 21, 25);
+ }
+.opinion { 
+  grid-area: opinion;
+  height:360px;
+  background-color: rgb(20, 21, 25);
+}
+.media { 
+  grid-area: media; 
+  height:360px;
+  background-color: rgb(20, 21, 25);
+}
+
+.risk-item-title {
+  background: linear-gradient(92.88deg, rgb(69, 94, 181) 9.16%, rgb(86, 67, 204) 43.89%, rgb(103, 63, 215) 64.72%);
+  border-radius: 6px;
+  padding: 2px 10px;
+  font-size: 15px;
+  margin-bottom: 6px;
+  align-self: flex-start;
+}
+.donut-placeholder {
+  color: #fff;
+  text-align: center;
+  font-size: 18px;
+  line-height: 1.5;
+}
+/* ------------ */
+/* 字体主色调优化 */
+.risk-board,
+.dashboard-container,
+.main-content,
+.risk-item,
+.hot-comment-content {
+  color: #e0e6f6;
+}
+.topic,
+.risk-item-title,
+.base-info-title,
+.hot-comment-title,
+.summary-title {
+  color: #f5f7fa;
+}
+.name,
+.fans,
+.time {
+  color: #bfc6d9;
+  opacity: 0.8;
+}
+.table-header > div {
+  color: #d3d7e9;
+}
+.table-row:not(.table-header) > div {
+  color: #e0e6f6;
+}
+.summary-content {
+  color: #d3d7e9;
+}
+.risk-text {
+  color: #d3d7e9;
 }
 </style>

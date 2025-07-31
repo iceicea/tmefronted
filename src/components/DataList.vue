@@ -172,8 +172,8 @@ const isFilterApplied = ref(false)
 
 onMounted(() => {
     //此处调用api获取后端数据
-    fetchDataList();
-//   dataList.value = data;
+   // fetchDataList();
+ dataList.value = data;
  // console.log('onMounted', fetchDataList());
  // dataList.value = fetchDataList();
 })
@@ -355,13 +355,13 @@ const getTitle =(item)=>{
 
 const handleDetailClick = (item) => {
   console.log('查看详情:', item)
-  // 这里未来可以实现跳转页面的逻辑
-  //alert(`查看 ${item.title} 的详情（功能开发中）`)
+  
+  // 将数据存储到 sessionStorage
+  sessionStorage.setItem('riskBoardData', JSON.stringify(item))
+  
+  // 跳转到详情页
   router.push({
-    name: 'RiskBoard',
-    params: {
-      item: item
-    }
+    name: 'RiskBoard'
   })
 }
 </script>

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 // 示例假数据
-import { ref, computed } from "vue";
+import { ref, computed, onMounted } from "vue";
 
 import PieChart from "./PieChart.vue";
 import LineChart from "./lineChart.vue";
@@ -14,6 +14,14 @@ const overview = [
   { label: "发布平台", value: "微博" },
   { label: "情感强度", value: "高" },
 ];
+
+onMounted(() => {
+  const storedData = sessionStorage.getItem('riskBoardData')
+  if (storedData) {
+    data.value = JSON.parse(storedData)
+    console.log('获取到的数据:', data.value)
+  }
+})
 const userImpact = ref(75); // 示例数据
 const diffusion = ref(65); // 示例数据
 const positionScore = ref(85); // 示例数据

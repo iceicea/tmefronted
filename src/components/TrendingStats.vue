@@ -9,16 +9,7 @@ import AppDetailCard from "./AppDetailCard.vue";
 const toast = useToast();
 const activePlatform = ref<string | null>(null);
 
-const keywords = [
-  "Q音",
-  "蔚来",
-  "乐道",
-  "萤火虫",
-  "换电站",
-  "ES6",
-  "ES8",
-  "L60",
-];
+const keyword = "Q音";
 const availableKeywords = ["Q音", "乐道"];
 const platforms = ["抖音", "微博", "知乎", "微信视频号"];
 const ourPlatforms = [
@@ -69,6 +60,9 @@ const stats = ref<StatsData>({
     微信视频号: {
       volume: 0,
     },
+    小红书: {
+      volume: 0,
+    },
   },
   乐道: {
     抖音: { volume: 0 },
@@ -89,8 +83,14 @@ const appPool = [
   {
     name: "Q音",
     departments: [
-      { id: "qq-1", name: "版权部" },
-      { id: "qq-2", name: "运营部" },
+      { id: "qq-1", name: "基础产品中心" },
+      { id: "qq-2", name: "商业化中心" },
+      { id: "qq-3", name: "合作产品中心" },
+      { id: "qq-4", name: "长音频业务中心" },
+      { id: "qq-5", name: "内容运营中心" },
+      { id: "qq-6", name: "数据科学中心" },
+      { id: "qq-7", name: "工具研发中心" },
+      { id: "qq-8", name: "平台研发中心" },
     ],
   },
   {
@@ -126,7 +126,9 @@ function addCard() {
 
 const calculateMetrics = (data: ApiData[]) => {
   // 声量
-  const volume = [...data].reduce((acc, cur) => acc + cur.voice_score, 0);
+  const volume = Math.round(
+    [...data].reduce((acc, cur) => acc + cur.voice_score, 0)
+  );
 
   //情感指数
   const sentimentScores =
@@ -213,7 +215,7 @@ const fetchLatestData = async (keyword: string) => {
   try {
     const response = await fetch(`/api/monitor/${keyword}/latest`);
     const data = await response.json();
-
+    console.log(`Received response for :`, data);
     if (Array.isArray(data)) {
       const douyinData = data.filter(
         (item: ApiData) => item.platform === "douyin"
@@ -249,6 +251,7 @@ const fetchLatestData = async (keyword: string) => {
           };
         }
       }
+      console.log("监测数据:", stats.value);
     }
   } catch (error) {
     console.error("获取监测数据失败:", error);
@@ -258,7 +261,7 @@ const fetchLatestData = async (keyword: string) => {
 
 onMounted(async () => {
   await fetchLatestData("Q音");
-  await fetchLatestData("蔚来");
+  // await fetchLatestData("蔚来");
 });
 
 const handleKeywordClick = (keyword: string) => {
@@ -298,6 +301,7 @@ const getAppStats = (appName: string) => {
   // 根据应用名称从 stats.value 中提取数据
   // 这里假设 stats.value 的结构与应用名称相关
   // 实际逻辑需要根据数据源调整
+  console.log("1111", appName, stats.value[appName]);
   const appStats = {
     total: stats.value[appName]["抖音"]?.total || 0,
     sentiment: stats.value[appName]["抖音"]?.sentimentScores || 0,

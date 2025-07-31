@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
 import OpinionChart from "./OpinionChart.vue";
+import MonitoringMap from "./MonitoringMap.vue";
 import PlatformVideoList from "./PlatformVideoList.vue";
 
 interface Props {
@@ -25,6 +26,7 @@ const logoMap: Record<string, string> = {
   酷狗: "kglogo.png",
 };
 const logoSrc = computed(() => `/${logoMap[props.appName]}`);
+console.log(props.appName, "000", props.stats);
 
 const emit = defineEmits(["add"]);
 const showVideo = ref(false);
@@ -102,20 +104,20 @@ function toggleDetail() {
         </div>
       </section>
       <!-- ② 中间趋势图 -->
-      <section class="trend">
-        <OpinionChart />
-      </section>
+      <!-- <section class="trend"> -->
+      <!-- <OpinionChart /> -->
+      <!-- </section> -->
 
       <!-- ③ 右侧部门 -->
       <section class="depts">
-        <h3>各部门详情</h3>
-        <ul>
-          <li v-for="dept in departments" :key="dept.id">
+        <h1 class="gradient-text">业务板块</h1>
+        <div class="department-grid">
+          <div v-for="dept in departments" :key="dept.id">
             <router-link :to="{ name: 'DataList' }">
               {{ dept.name }}
             </router-link>
-          </li>
-        </ul>
+          </div>
+        </div>
       </section>
     </main>
 
@@ -162,7 +164,7 @@ function toggleDetail() {
 .three-col {
   display: grid;
   gap: 1.5rem;
-  grid-template-columns: 1fr 1.5fr 1fr;
+  grid-template-columns: minmax(400px, 1fr) minmax(400px, 1fr);
 }
 @media (max-width: 767px) {
   .three-col {
@@ -171,6 +173,7 @@ function toggleDetail() {
 }
 
 .metrics {
+  min-width: 400px;
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   gap: 1rem;
@@ -225,6 +228,7 @@ function toggleDetail() {
 }
 
 .metrics-simple {
+  min-width: 300px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -250,6 +254,7 @@ function toggleDetail() {
   margin-top: 0.2rem;
 }
 .metrics-full {
+  min-width: 600px;
   display: grid;
   grid-template-columns: repeat(3, 1fr); /* 3 列 */
   grid-template-rows: repeat(2, 1fr); /* 2 行 */
@@ -274,5 +279,123 @@ function toggleDetail() {
 .video-list {
   grid-column: 1 / -1;
   margin-top: 1rem;
+}
+.gradient-text {
+  background: var(--primary-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin: 1rem;
+  letter-spacing: 0.05em;
+}
+
+ul {
+  font-size: 1.05rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* 列表项基础样式 */
+li {
+  text-align: center;
+  margin-bottom: 12px;
+  transition: all 0.3s ease;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+/* 链接样式 */
+li a {
+  display: block;
+  padding: 12px 16px;
+  text-decoration: none;
+  color: #333;
+  background-color: #353536;
+  border-left: 4px solid transparent;
+  transition: all 0.3s ease;
+  font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+  font-weight: 500;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* 悬停效果 */
+li:hover {
+  transform: translateX(5px);
+}
+
+li:hover a {
+  background-color: #e9ecef;
+  border-left-color: #3f87a6;
+  color: #2c3e50;
+}
+
+/* 活动状态样式 */
+li a.router-link-active {
+  background-color: #e1f5fe;
+  border-left-color: #0288d1;
+  color: #01579b;
+  font-weight: 600;
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+  li a {
+    padding: 10px 12px;
+    font-size: 14px;
+  }
+}
+
+.department-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* 两列等宽 */
+  gap: 12px; /* 列间距 */
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* 保留原有的悬停和样式效果 */
+li a {
+  display: block;
+  padding: 12px 16px;
+  background-color: #333;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+}
+
+li:hover a {
+  transform: translateX(5px);
+  background-color: #5c5c5d;
+}
+
+.department-grid {
+  text-align: center;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  padding: 12px;
+}
+
+.department-grid > div {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 12px;
+  transition: all 0.3s ease;
+  background: rgb(149, 146, 146);
+}
+
+.department-grid > div:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.department-grid a {
+  display: block;
+  color: #000000;
+  font-weight: 500;
+  text-decoration: none;
 }
 </style>

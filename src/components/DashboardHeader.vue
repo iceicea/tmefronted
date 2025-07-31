@@ -57,6 +57,7 @@ const handleLogoClick = () => {
 
 <style scoped>
 .header {
+  position: relative;
   padding: 2rem;
   background: var(--bg-card);
   display: flex;
@@ -69,6 +70,8 @@ const handleLogoClick = () => {
 }
 
 .logo {
+  position: relative;
+  padding-right: 2rem;
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
@@ -98,6 +101,9 @@ const handleLogoClick = () => {
 }
 
 .subtitle-container {
+  position: absolute;
+  left: 20%;
+  bottom: 10%;
   display: flex;
   flex-direction: column;
   gap: 0.35rem;
@@ -141,6 +147,7 @@ const handleLogoClick = () => {
 }
 
 .monitor-btn {
+  width: 150px;
   font-weight: 600;
   padding: 1em 3.5em;
   letter-spacing: 0.05em;
@@ -160,20 +167,25 @@ const handleLogoClick = () => {
 }
 
 .header-actions {
+  position: absolute;
+  bottom: 10%;
+  right: 3%;
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
+  align-items: center;
+
   gap: 1rem;
 }
 
 .powered-by {
+  width: 150px;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0rem;
   color: var(--text-secondary);
-  font-size: 0.9rem;
+  font-size: 0.7rem;
   opacity: 0.8;
-  padding: 0.5rem 1rem;
+  padding: 0.4rem 0.4rem;
   background: rgba(255, 255, 255, 0.03);
   border-radius: 8px;
   border: 1px solid var(--border-color);

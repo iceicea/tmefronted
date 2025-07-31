@@ -171,9 +171,10 @@ const isFilterApplied = ref(false)
 
 onMounted(() => {
     //此处调用api获取后端数据
-    // fetchDataList();
+    fetchDataList();
   // dataList.value = data;
-  dataList.value = fetchDataList();
+ // console.log('onMounted', fetchDataList());
+ // dataList.value = fetchDataList();
 })
 
 // 计算筛选后的数据列表
@@ -326,6 +327,7 @@ const fetchDataList = async () => {
   try {
     const response = await fetch(`/api/monitor/Q音/latest`);
     const data = await response.json();
+    dataList.value = data;
     console.log(data);
     return data;
   } catch (error) {

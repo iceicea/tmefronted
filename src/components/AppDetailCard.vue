@@ -111,7 +111,7 @@ function toggleDetail() {
         <h3>各部门详情</h3>
         <ul>
           <li v-for="dept in departments" :key="dept.id">
-            <router-link :to="{ name: 'RiskBoard' }">
+            <router-link :to="{ name: 'DataList' }">
               {{ dept.name }}
             </router-link>
           </li>

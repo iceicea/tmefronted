@@ -324,7 +324,7 @@ const viewDetail = (item) => {
 
 const fetchDataList = async () => {
   try {
-    const response = await fetch(`/api/monitor/'Q音'/latest`);
+    const response = await fetch(`/api/monitor/Q音/latest`);
     const data = await response.json();
     console.log(data);
     return data;

@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 // 示例假数据
 import { ref, computed } from "vue";
 
@@ -36,17 +36,17 @@ console.log(data)
     <header class="info-bar">
       <!-- ① 9:16 封面 -->
       <div class="cover-wrapper">
-        <img src="/NOMS_logo.png" alt="cover" class="cover" />
+        <img :src="data.cover_url" />
       </div>
 
       <!-- ② 事件详情 -->
       <div class="event-info">
         <h3 class="topic">{{ data.topics }}</h3>
         <div class="author-line">
-          <span class="name">恒大</span>
-          <span class="fans">粉丝量:100w</span>
+          <span class="name">{{ data.author_name }}</span>
+          <!-- <span class="fans">粉丝量:{{  }}</span> -->
         </div>
-        <p class="time">发布时间:2025-07-28 22:32:43</p>
+        <p class="time">发布时间:{{ data. created_at}}</p>
       </div>
 
       <!-- ③ 右侧风险 & 按钮 -->
@@ -305,8 +305,9 @@ th {
 }
 
 .cover {
-  height: 200px; /* 填充满 cover-wrapper */
-  width: 200px; /* 按比例缩放 */
+  margin-left: 15px;
+  height: 150px; /* 填充满 cover-wrapper */
+  width: 150px; /* 按比例缩放 */
   object-fit: cover;
   border-radius: 8px;
 }

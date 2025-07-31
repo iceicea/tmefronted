@@ -29,7 +29,6 @@ export default {
   data() {
     return {
       option: {
-        backgroundColor: "#2c343c",
         title: {
           text: "Customized Pie",
           left: "center",

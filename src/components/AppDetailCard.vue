@@ -16,6 +16,8 @@ interface Props {
   departments: { id: string; name: string }[]; // 右侧部门列表
 }
 
+const props = defineProps<Props>();
+
 const logoMap: Record<string, string> = {
   网易云: "wyylogo.jpg",
   Q音: "qqyylogo.png",
@@ -24,7 +26,6 @@ const logoMap: Record<string, string> = {
 };
 const logoSrc = computed(() => `/${logoMap[props.appName]}`);
 
-const props = defineProps<Props>();
 const emit = defineEmits(["add"]);
 const showVideo = ref(false);
 

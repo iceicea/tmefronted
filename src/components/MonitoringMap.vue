@@ -1,111 +1,117 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import * as echarts from 'echarts'
-import type { GeoComponentOption } from 'echarts/types/dist/echarts'
+import { ref, onMounted } from "vue";
+import * as echarts from "echarts";
+import type { GeoComponentOption } from "echarts/types/dist/echarts";
 
 // 使用在线地图数据
-const MAP_URL = '/map-api/areas_v3/bound/100000_full.json'
+const MAP_URL = "/map-api/areas_v3/bound/100000_full.json";
 
 interface LocationData {
-  name: string
-  value: [number, number]
-  sentiment: number
-  keyword: string
-  platform: string
-  time: string
+  name: string;
+  value: [number, number];
+  sentiment: number;
+  keyword: string;
+  platform: string;
+  time: string;
 }
 
 const locationData = ref<LocationData[]>([
   {
-    name: '北京',
+    name: "北京",
     value: [116.405285, 39.904989],
     sentiment: 75,
-    keyword: '蔚来',
-    platform: '抖音',
-    time: '2024-03-15 10:30'
+    keyword: "Q音",
+    platform: "抖音",
+    time: "2024-03-15 10:30",
   },
   {
-    name: '上海',
+    name: "上海",
     value: [121.472644, 31.231706],
     sentiment: -25,
-    keyword: '蔚来',
-    platform: '抖音',
-    time: '2024-03-15 10:28'
+    keyword: "Q音",
+    platform: "抖音",
+    time: "2024-03-15 10:28",
   },
   {
-    name: '广州',
+    name: "广州",
     value: [113.280637, 23.125178],
     sentiment: 15,
-    keyword: '蔚来',
-    platform: '抖音',
-    time: '2024-03-15 10:25'
-  }
-])
+    keyword: "Q音",
+    platform: "抖音",
+    time: "2024-03-15 10:25",
+  },
+]);
 
-const chartInstance = ref<echarts.ECharts | null>(null)
+const chartInstance = ref<echarts.ECharts | null>(null);
 
 const handleZoomIn = () => {
-  if (!chartInstance.value) return
-  const option = chartInstance.value.getOption()
-  const geoOption = option.geo as GeoComponentOption[]
-  if (!geoOption?.[0]?.zoom) return
-  const zoom = geoOption[0].zoom as number
+  if (!chartInstance.value) return;
+  const option = chartInstance.value.getOption();
+  const geoOption = option.geo as GeoComponentOption[];
+  if (!geoOption?.[0]?.zoom) return;
+  const zoom = geoOption[0].zoom as number;
   chartInstance.value.setOption({
-    geo: [{
-      zoom: zoom * 1.5
-    }]
-  })
-}
+    geo: [
+      {
+        zoom: zoom * 1.5,
+      },
+    ],
+  });
+};
 
 const handleZoomOut = () => {
-  if (!chartInstance.value) return
-  const option = chartInstance.value.getOption()
-  const geoOption = option.geo as GeoComponentOption[]
-  if (!geoOption?.[0]?.zoom) return
-  const zoom = geoOption[0].zoom as number
+  if (!chartInstance.value) return;
+  const option = chartInstance.value.getOption();
+  const geoOption = option.geo as GeoComponentOption[];
+  if (!geoOption?.[0]?.zoom) return;
+  const zoom = geoOption[0].zoom as number;
   chartInstance.value.setOption({
-    geo: [{
-      zoom: zoom / 1.5
-    }]
-  })
-}
+    geo: [
+      {
+        zoom: zoom / 1.5,
+      },
+    ],
+  });
+};
 
 const handleReset = () => {
-  if (!chartInstance.value) return
+  if (!chartInstance.value) return;
   chartInstance.value.setOption({
-    geo: [{
-      zoom: 1.2,
-      center: undefined
-    }]
-  })
-}
+    geo: [
+      {
+        zoom: 1.2,
+        center: undefined,
+      },
+    ],
+  });
+};
 
 const initChart = async () => {
-  const chartDom = document.getElementById('monitoring-map')
-  if (!chartDom) return
-  
-  const myChart = echarts.init(chartDom)
-  chartInstance.value = myChart // 保存实例引用
-  
+  const chartDom = document.getElementById("monitoring-map");
+  if (!chartDom) return;
+
+  const myChart = echarts.init(chartDom);
+  chartInstance.value = myChart; // 保存实例引用
+
   // 加载地图数据
   try {
-    const response = await fetch(MAP_URL)
-    const chinaJSON = await response.json()
-    echarts.registerMap('china', chinaJSON)
-    
+    const response = await fetch(MAP_URL);
+    const chinaJSON = await response.json();
+    echarts.registerMap("china", chinaJSON);
+
     const getSentimentColor = (sentiment: number) => {
-      if (sentiment > 30) return '#1ce783'
-      if (sentiment < -30) return '#ff4d4d'
-      return '#ffd700'
-    }
+      if (sentiment > 30) return "#1ce783";
+      if (sentiment < -30) return "#ff4d4d";
+      return "#ffd700";
+    };
 
     const option = {
-      backgroundColor: 'transparent',
+      backgroundColor: "transparent",
       tooltip: {
-        trigger: 'item',
+        trigger: "item",
         formatter: (params: any) => {
-          const data = params.data
-          if (!data) return ''
+          const data = params.data;
+          if (!data) return "";
           return `
             <div style="padding: 8px">
               <div style="margin-bottom: 8px">${data.name}</div>
@@ -114,58 +120,60 @@ const initChart = async () => {
               <div>情感指数：${data.sentiment}</div>
               <div>时间：${data.time}</div>
             </div>
-          `
-        }
+          `;
+        },
       },
       geo: {
-        map: 'china',
+        map: "china",
         roam: true,
         zoom: 1.2,
         scaleLimit: {
           min: 1,
-          max: 3
+          max: 3,
         },
         itemStyle: {
-          areaColor: 'rgba(255, 255, 255, 0.05)',
-          borderColor: 'rgba(255, 255, 255, 0.2)'
+          areaColor: "rgba(255, 255, 255, 0.05)",
+          borderColor: "rgba(255, 255, 255, 0.2)",
         },
         emphasis: {
           itemStyle: {
-            areaColor: 'rgba(255, 255, 255, 0.1)'
-          }
-        }
+            areaColor: "rgba(255, 255, 255, 0.1)",
+          },
+        },
       },
-      series: [{
-        type: 'effectScatter',
-        coordinateSystem: 'geo',
-        data: locationData.value,
-        symbolSize: 12,
-        showEffectOn: 'render',
-        rippleEffect: {
-          brushType: 'stroke'
+      series: [
+        {
+          type: "effectScatter",
+          coordinateSystem: "geo",
+          data: locationData.value,
+          symbolSize: 12,
+          showEffectOn: "render",
+          rippleEffect: {
+            brushType: "stroke",
+          },
+          itemStyle: {
+            color: (params: any) => getSentimentColor(params.data.sentiment),
+          },
+          emphasis: {
+            scale: true,
+          },
         },
-        itemStyle: {
-          color: (params: any) => getSentimentColor(params.data.sentiment)
-        },
-        emphasis: {
-          scale: true
-        }
-      }]
-    }
+      ],
+    };
 
-    myChart.setOption(option)
+    myChart.setOption(option);
   } catch (error) {
-    console.error('Failed to load map data:', error)
+    console.error("Failed to load map data:", error);
   }
-  
-  window.addEventListener('resize', () => {
-    myChart.resize()
-  })
-}
+
+  window.addEventListener("resize", () => {
+    myChart.resize();
+  });
+};
 
 onMounted(() => {
-  initChart()
-})
+  initChart();
+});
 </script>
 
 <template>
@@ -328,4 +336,4 @@ onMounted(() => {
   font-size: 0.85rem;
   color: var(--text-secondary);
 }
-</style> 
+</style>

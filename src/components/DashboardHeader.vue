@@ -3,7 +3,7 @@
     <div class="logo">
       <div class="logo-container">
         <img
-          src="/ourlogo.png"
+          src="/tmelogonew.png"
           alt="NOMS Logo"
           class="noms-logo"
           @click="handleLogoClick"

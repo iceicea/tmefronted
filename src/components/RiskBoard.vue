@@ -1,6 +1,6 @@
 <script setup>
 // 示例假数据
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted ,watch} from "vue";
 
 import PieChart from "./PieChart.vue";
 import LineChart from "./lineChart.vue";
@@ -14,12 +14,19 @@ const overview = [
   { label: "发布平台", value: "微博" },
   { label: "情感强度", value: "高" },
 ];
-
+const data = ref({})
 onMounted(() => {
   const storedData = sessionStorage.getItem('riskBoardData')
   if (storedData) {
     data.value = JSON.parse(storedData)
     console.log('获取到的数据:', data.value)
+    plat.value = data.value.platform
+    console.log('获取到的平台:', plat.value)
+    if (plat.value === 'douyin') {
+    plat.value = '抖音';
+  } else if (plat.value === 'xiaohongshu') {
+    plat.value = '小红书';
+  }
   }
 })
 const userImpact = ref(75); // 示例数据
@@ -27,15 +34,63 @@ const diffusion = ref(65); // 示例数据
 const positionScore = ref(85); // 示例数据
 const riskLevel = ref("红色预警");
 const riskScore = ref(78);
+const riskColor = ref('fff')
+const plat = ref('小红书')
+watch(
+  () => data.value,
+  (newVal) => {
+    if (newVal.track_type === 'risk') {
+      const score = newVal.pors_score
+      if (score > 75) {
+        riskLevel.value = "红色预警"
+        riskColor.value = 'red'
+      } else if (score >= 50 && score <= 75) {
+        riskLevel.value = "橙色预警"
+        riskColor.value = 'orange'
+      } else if (score <= 49 && score >= 30) {
+        riskLevel.value = "黄色预警"
+        riskColor.value = 'yellow'
+      } else {
+        riskLevel.value = "蓝色预警"
+        riskColor.value = 'blue'
+      }
+    }
+  },
+  { immediate: true, deep: true }
+)
 
-const riskColor = computed(() => {
-  if (riskScore.value >= 75) return "#ff4d4d"; // 红
-  if (riskScore.value >= 50) return "#ffa726"; // 橙
-  return "#4caf50"; // 绿
-});
-const route = useRoute()
-const data = route.params
-console.log(data)
+const fansCount = computed(() => {
+  const score = data.value.user_influence_score
+  if (typeof score !== 'number') return 0
+  return Math.pow(10, (score + 35) / 22.5).toFixed(0)
+})
+const stance = computed(() => {
+  if (data.value.track_type === 'risk') {
+    if(data.value.pors_score === 80){
+      return '法律与安全红线'
+    }else if(data.value.pors_score === 70){
+      return '核心功能瘫痪'
+    }else if(data.value.pors_score === 60 ){
+      return '核心体验受损'
+    }else if(data.value.pors_score === 40 ){
+      return '重要功能缺陷'
+    }else {
+      return '局部或非核心问题'
+    }
+  }else{
+     if(data.value.pors_score === 80){
+      return '自发品牌故事/高价值UGC'
+    }else if(data.value.pors_score === 70){
+      return '深度功能赞扬/关键人物背书'
+    }else if(data.value.pors_score === 60 ){
+      return '创意用法/破圈安利'
+    }else if(data.value.pors_score === 40 ){
+      return '常规积极反馈'
+    }else {
+      return '中性互动分享'
+    }
+  }
+})
 </script>
 
 <template>
@@ -44,12 +99,12 @@ console.log(data)
     <header class="info-bar">
       <!-- ① 9:16 封面 -->
       <div class="cover-wrapper">
-        <img :src="data.cover_url" />
+        <img :src="data.cover_url" class="cover"/>
       </div>
 
       <!-- ② 事件详情 -->
       <div class="event-info">
-        <h3 class="topic">{{ data.topics }}</h3>
+        <h3 class="topic">{{ data.title }}</h3>
         <div class="author-line">
           <span class="name">{{ data.author_name }}</span>
           <!-- <span class="fans">粉丝量:{{  }}</span> -->
@@ -63,11 +118,11 @@ console.log(data)
         <div>
           <span class="risk-text">风险预警级别：</span>
           <div class="risk-badge" :style="{ backgroundColor: riskColor }">
-            {{ "xxx分" + riskLevel }}
+            💡{{ riskLevel }}
           </div>
         </div>
 
-        <button class="export-btn">导出报告</button>
+        <button class="export-btn">转发至企业微信</button>
         <a class="jump-btn" href="#origin">跳转原文</a>
       </div>
     </header>
@@ -78,7 +133,7 @@ console.log(data)
     <div class="summary-bar">
       <div class="summary-title">摘要</div>
       <div class="summary-content">
-        一连5张罚单，中国银行因“原油宝”产品风险事件被重罚5050万元，另有4名相关责任人被给予警告并合计处罚款180万元。……
+        {{ data.summary }}
       </div>
     </div>
 
@@ -97,15 +152,15 @@ console.log(data)
               <div>发布平台</div>
             </div>
             <div class="table-row">
-              <div>Q音乐，酷狗音乐<br/>(最多两个)</div>
-              <div>Q音推荐算法<br/>(保留前三个)</div>
-              <div>小红书</div>
+              <div>Q音乐，酷狗音乐</div>
+              <div>Q音推荐算法</div>
+              <div>{{plat}}</div>
             </div>
           </div>
         </div>
         <!-- 热门评论 -->
         <div class="hot-comment-section">
-          <div class="hot-comment-title">热门评论</div>
+          <div class="hot-comment-title">传播趋势</div>
           <LineChart/>
         </div>
       </div>
@@ -120,26 +175,42 @@ console.log(data)
         <div class="risk-grid">
           <div class="risk-item user-impact">
             <div class="risk-item-title">用户影响分</div>
-            <div class="risk-item-content" style="font-size: 14px;">粉丝数：</div>
+            <div class="risk-item-content" >粉丝数：{{ fansCount }}</div>
           </div>
           <div class="risk-item spread">
             <div class="risk-item-title">传播扩散分</div>
-            <div class="risk-item-content" style="font-size: 14px;">点赞、收藏、评论：</div>
+            <div class="risk-item-content" >点赞数：{{ data.like_count }}</div>
+             <div class="risk-item-content" >分享数：{{ data.share_count }}</div>
+              <div class="risk-item-content" >评论数：{{ data.comment_count }}</div>
           </div>
           <div class="risk-item donut-chart">
-            <PieChart />
+            <PieChart
+            :data="data" />
           </div>
           <div class="risk-item stance">
             <div class="risk-item-title">立场得分</div>
-            <div class="risk-item-content" style="font-size: 14px;">场景类型：<br/>情感强度：</div>
+            <div class="risk-item-content" >场景类型：{{ stance}}<br/>情感强度：{{ data.sentiment_score }}</div>
           </div>
           <div class="risk-item opinion">
             <div class="risk-item-title">网民观点</div>
-            <div class="risk-item-content"></div>
+            <div class="risk-item-content">
+              <p>1.“十年老用户都要被劝退了，感觉平台越来越不友好。”</p>
+              <p>2.“每次更新都是在削减免费功能，真心希望能多考虑下普通用户。”</p>
+              <p>3.“VIP提示太频繁了，体验很差，感觉被强制消费。”</p>
+              <p>4.“花了不少钱买数字专辑，结果基础功能还要收费，太不合理了。”</p>
+              <p>5.“现在音乐平台都在卷会员，普通用户的权益谁来保障？”</p>
+              <p>6.“‘拥有感是幻觉’这句话太真实了，付费后也没觉得有多大提升。”</p>
+              <p>7.“以前觉得QQ音乐很用心，现在越来越商业化，失望。”</p>
+              <p>8.“如果不是歌单和收藏太多，早就换平台了。”</p>
+            </div>
           </div>
           <div class="risk-item media">
             <div class="risk-item-title">媒体观点</div>
-            <div class="risk-item-content"></div>
+            <div class="risk-item-content">
+              <p>1.“近年来，音乐平台通过会员体系提升营收，但用户体验与付费价值感需同步提升。”</p>
+              <p>2.“老用户对平台的忠诚度正在被不断削弱，如何维护用户粘性成为行业关注焦点。”</p>
+              <p>3.“部分功能收费引发争议，反映出数字内容平台在商业化与用户体验之间的平衡难题。”</p>
+            </div>
           </div>
         </div>
       </div>
@@ -675,7 +746,7 @@ th {
     "user-impact donut-chart spread"
     "stance donut-chart spread"
     "opinion opinion media";
-  grid-template-columns: 1.1fr 1.2fr 1.1fr;
+  grid-template-columns: 1.1fr 1.5fr 1.1fr;
   grid-template-rows: 110px 110px 1fr;
   gap: 10px;
   flex: 1;

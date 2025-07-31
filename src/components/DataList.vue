@@ -172,10 +172,10 @@ const isFilterApplied = ref(false)
 
 onMounted(() => {
     //此处调用api获取后端数据
-   // fetchDataList();
- dataList.value = data;
- // console.log('onMounted', fetchDataList());
- // dataList.value = fetchDataList();
+   fetchDataList();
+//  dataList.value = data;
+//  console.log('onMounted', fetchDataList());
+ dataList.value = fetchDataList();
 })
 
 // 计算筛选后的数据列表

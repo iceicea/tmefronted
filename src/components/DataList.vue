@@ -89,8 +89,8 @@
 
         <!-- 2. 视频信息 -->
         <div class="video-info-section">
-          <div class="title">{{ item.title || '未提供标题' }}</div>
-          <div class="content">{{ item.content || '未提供内容' }}</div>
+          <div class="title">{{ getTitle(item) || '未提供标题' }}</div>
+          <div class="content">{{ getPlatform(item.platform) || '未提供内容' }}</div>
         </div>
 
         <!-- 3. 互动数据 -->
@@ -142,7 +142,7 @@
         <div class="action-section">
           <button 
             class="detail-btn"
-            @click="viewDetail(item)"
+            @click="handleDetailClick(item)"
           >
             查看详情
           </button>
@@ -155,6 +155,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { data } from '../data/data.js'
+import router from '../router/index.js'
 
 const dataList = ref([])
 
@@ -172,7 +173,7 @@ const isFilterApplied = ref(false)
 onMounted(() => {
     //此处调用api获取后端数据
     fetchDataList();
-  // dataList.value = data;
+//   dataList.value = data;
  // console.log('onMounted', fetchDataList());
  // dataList.value = fetchDataList();
 })
@@ -334,6 +335,35 @@ const fetchDataList = async () => {
     console.error("获取视频列表失败:", error);
   }
 };
+
+const getPlatform = (value) => {
+  if (value === 'douyin') {
+    return '抖音';
+  } else if (value === 'xiaohongshu') {
+    return '小红书';
+  }
+}
+
+const getTitle =(item)=>{
+    if(!item.title){
+        console.log('判断为null');
+        return item.content;
+    }else{
+        return item.title;
+    }
+}
+
+const handleDetailClick = (item) => {
+  console.log('查看详情:', item)
+  // 这里未来可以实现跳转页面的逻辑
+  //alert(`查看 ${item.title} 的详情（功能开发中）`)
+  router.push({
+    name: 'RiskBoard',
+    params: {
+      item: item
+    }
+  })
+}
 </script>
 
 <style scoped>
